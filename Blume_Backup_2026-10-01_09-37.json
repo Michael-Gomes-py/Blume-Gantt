@@ -1,0 +1,168 @@
+{
+  "app": "Blume Project Management",
+  "version": "V17",
+  "exportedAt": "2026-10-01T12:37:33.211Z",
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Reunião de inicialização de projeto",
+      "owner": "Liderança",
+      "start": "2026-08-03",
+      "duration": 2,
+      "status": "Concluída",
+      "progress": 100
+    },
+    {
+      "id": 2,
+      "name": "Levantamento de Requisitos do Sistema",
+      "owner": "Ryan",
+      "start": "2026-08-05",
+      "duration": 3,
+      "status": "Concluída",
+      "progress": 100
+    },
+    {
+      "id": 3,
+      "name": "Aprovação do Plano",
+      "owner": "Liderança",
+      "start": "2026-08-10",
+      "duration": 2,
+      "status": "Concluída",
+      "progress": 100
+    },
+    {
+      "id": 4,
+      "name": "Reunião de alinhamento de tarefas",
+      "owner": "Liderança",
+      "start": "2026-08-10",
+      "duration": 1,
+      "status": "Concluída",
+      "progress": 100
+    },
+    {
+      "id": 5,
+      "name": "Delegação geral das tarefas",
+      "owner": "Liderança",
+      "start": "2026-08-10",
+      "duration": 1,
+      "status": "Concluída",
+      "progress": 100
+    },
+    {
+      "id": 6,
+      "name": "Estudo do pfSense",
+      "owner": "Todos",
+      "start": "2026-08-10",
+      "duration": 90,
+      "status": "Em andamento",
+      "progress": 10
+    },
+    {
+      "id": 7,
+      "name": "Estudo específico do pfSense",
+      "owner": "Vinicius",
+      "start": "2026-08-10",
+      "duration": 90,
+      "status": "Em andamento",
+      "progress": 60
+    },
+    {
+      "id": 8,
+      "name": "Estudo específico do pfSense",
+      "owner": "Kauã",
+      "start": "2026-08-10",
+      "duration": 90,
+      "status": "Em andamento",
+      "progress": 60
+    },
+    {
+      "id": 9,
+      "name": "Documentação do projeto",
+      "owner": "Dimitri",
+      "start": "2026-11-15",
+      "duration": 8,
+      "status": "Não iniciada",
+      "progress": 0
+    },
+    {
+      "id": 10,
+      "name": "Auxílio da topologia e endereçamentos",
+      "owner": "Michael",
+      "start": "2026-08-10",
+      "duration": 20,
+      "status": "Concluída",
+      "progress": 100
+    },
+    {
+      "id": 11,
+      "name": "Topologia e endereçamentos",
+      "owner": "Ryan",
+      "start": "2026-09-01",
+      "duration": 5,
+      "status": "Concluída",
+      "progress": 100
+    },
+    {
+      "id": 1790854653609,
+      "name": "Apresentação para a banca(teste)",
+      "owner": "Todos",
+      "start": "2026-09-28",
+      "duration": 1,
+      "status": "Concluída",
+      "progress": 100
+    },
+    {
+      "id": 1790854691200,
+      "name": "Configuração do PfSense",
+      "owner": "Vinicius",
+      "start": "2026-10-01",
+      "duration": 40,
+      "status": "Em andamento",
+      "progress": 0
+    },
+    {
+      "id": 1790854740208,
+      "name": "Configuração do PfSense",
+      "owner": "Kauã",
+      "start": "2026-10-01",
+      "duration": 40,
+      "status": "Em andamento",
+      "progress": 0
+    },
+    {
+      "id": 1790854762969,
+      "name": "Criação e configuração de VM's",
+      "owner": "Liderança",
+      "start": "2026-10-11",
+      "duration": 5,
+      "status": "Não iniciada",
+      "progress": 0
+    },
+    {
+      "id": 1790854787865,
+      "name": "Configuração do Proxmox",
+      "owner": "Liderança",
+      "start": "2026-09-30",
+      "duration": 10,
+      "status": "Em andamento",
+      "progress": 0
+    },
+    {
+      "id": 1790854845993,
+      "name": "Apresentação do Projeto (TCC)",
+      "owner": "Liderança",
+      "start": "2026-10-01",
+      "duration": 5,
+      "status": "Não iniciada",
+      "progress": 0
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "name": "Projeto Blume",
+      "description": "Cronograma principal"
+    }
+  ],
+  "activeProject": 1
+}
