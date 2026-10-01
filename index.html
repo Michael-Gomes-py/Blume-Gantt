@@ -199,6 +199,10 @@ thead th{position:sticky;top:0;z-index:10;background:#171e26;color:#aebbc6;font-
       <button class="btn" id="fit">Ajustar ao tamanho</button>
       <button class="btn" id="zoomOut">−</button><span class="zoom-info" id="zoomInfo">100%</span><button class="btn" id="zoomIn">＋</button>
       <button class="btn" id="projectManager">Projetos</button>
+      <button class="btn primary" id="saveNow">💾 Salvar agora</button>
+      <button class="btn" id="downloadBackup">⬇ Baixar backup</button>
+      <button class="btn" id="restoreBackup">⬆ Restaurar backup</button>
+      <input type="file" id="backupFileInput" accept="application/json,.json" hidden>
       <button class="btn" id="exportExcel">Excel (.xlsx)</button>
       <button class="btn" id="exportImage">Exportar como imagem</button>
       <button class="btn danger" id="reset">Restaurar</button>
@@ -284,6 +288,106 @@ function queueSave(){
 function forceSave(){
   clearTimeout(saveTimer);
   if(hasUnsavedChanges)save();
+}
+
+function manualSave(){
+  clearTimeout(saveTimer);
+  save();
+  const status=document.getElementById('saveStatus');
+  if(status){
+    status.textContent='✓ Dados salvos agora';
+    clearTimeout(window.__saveFeedbackTimer);
+    window.__saveFeedbackTimer=setTimeout(()=>{status.textContent='● Dados sincronizados'},1800);
+  }
+}
+
+function downloadBackup(){
+  forceSave();
+  const backup={
+    app:'Blume Project Management',
+    version:'V18',
+    exportedAt:new Date().toISOString(),
+    tasks:clone(tasks),
+    projects:clone(projects),
+    activeProject
+  };
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  const stamp=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  const fileName=`Blume_Backup_${stamp.getFullYear()}-${pad(stamp.getMonth()+1)}-${pad(stamp.getDate())}_${pad(stamp.getHours())}-${pad(stamp.getMinutes())}.json`;
+  link.href=url;
+  link.download=fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+
+  const status=document.getElementById('saveStatus');
+  if(status){
+    status.textContent='✓ Backup baixado';
+    clearTimeout(window.__saveFeedbackTimer);
+    window.__saveFeedbackTimer=setTimeout(()=>{status.textContent='● Dados sincronizados'},2200);
+  }
+}
+
+function restoreBackup(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const backup=JSON.parse(reader.result);
+      if(!backup || typeof backup!=='object')throw new Error('Formato inválido.');
+      if(!Array.isArray(backup.tasks))throw new Error('O backup não contém uma lista de tarefas válida.');
+      if(backup.projects!==undefined && !Array.isArray(backup.projects))throw new Error('A lista de projetos do backup é inválida.');
+
+      const cleanTasks=backup.tasks.map(t=>({
+        id:Number(t.id),
+        name:String(t.name??'Nova etapa / tarefa'),
+        owner:String(t.owner??'Liderança'),
+        start:normalizeStart(t.start) || iso(new Date()),
+        duration:Math.max(1,Math.min(3650,parseInt(t.duration,10)||1)),
+        status:['Não iniciada','Em andamento','Concluída','Cancelada'].includes(t.status)?t.status:'Não iniciada',
+        progress:Math.max(0,Math.min(100,Number(t.progress)||0))
+      })).filter(t=>Number.isFinite(t.id));
+
+      if(!cleanTasks.length)throw new Error('O backup não possui tarefas válidas.');
+
+      if(!confirm(`Restaurar ${cleanTasks.length} tarefa(s) do backup? Os dados atuais serão substituídos.`))return;
+
+      tasks=cleanTasks;
+      if(Array.isArray(backup.projects) && backup.projects.length){
+        projects=backup.projects.map(p=>({
+          id:Number(p.id),
+          name:String(p.name??'Projeto'),
+          description:String(p.description??'')
+        })).filter(p=>Number.isFinite(p.id));
+        if(!projects.length)projects=[{id:1,name:'Projeto Blume',description:'Cronograma principal'}];
+      }
+
+      activeProject=Number(backup.activeProject)||projects[0]?.id||1;
+      if(!projects.some(p=>p.id===activeProject))activeProject=projects[0]?.id||1;
+
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));
+      localStorage.setItem(PROJECTS_KEY,JSON.stringify(projects));
+      hasUnsavedChanges=false;
+      renderFilter();
+      render();
+
+      const status=document.getElementById('saveStatus');
+      if(status){
+        status.textContent='✓ Backup restaurado';
+        clearTimeout(window.__saveFeedbackTimer);
+        window.__saveFeedbackTimer=setTimeout(()=>{status.textContent='● Dados sincronizados'},2500);
+      }
+    }catch(err){
+      console.error('Erro ao restaurar backup.',err);
+      alert('Não foi possível restaurar o backup. Verifique se o arquivo é um backup válido do Blume.');
+    }
+  };
+  reader.onerror=()=>alert('Não foi possível ler o arquivo de backup.');
+  reader.readAsText(file);
 }
 
 function loadProjects(){try{return JSON.parse(localStorage.getItem(PROJECTS_KEY))||[{id:1,name:'Projeto Blume',description:'Cronograma principal'}]}catch{return [{id:1,name:'Projeto Blume',description:'Cronograma principal'}]}}
@@ -561,6 +665,10 @@ document.getElementById('addTask').onclick=addTask;
 document.getElementById('filterOwner').onchange=render;
 document.getElementById('filterStatus').onchange=render;
 document.getElementById('projectManager').onclick=openProjects;
+document.getElementById('saveNow').onclick=manualSave;
+document.getElementById('downloadBackup').onclick=downloadBackup;
+document.getElementById('restoreBackup').onclick=()=>document.getElementById('backupFileInput').click();
+document.getElementById('backupFileInput').addEventListener('change',e=>{const file=e.target.files?.[0];restoreBackup(file);e.target.value='';});
 document.getElementById('reset').onclick=()=>{if(confirm('Restaurar as tarefas padrão?')){tasks=clone(DEFAULT_TASKS);save();renderFilter();render()}};
 document.getElementById('fit').onclick=fit;
 document.getElementById('zoomIn').onclick=()=>{zoom=Math.min(1.5,zoom+.1);applyZoom()};
